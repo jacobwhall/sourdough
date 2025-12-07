@@ -63,7 +63,8 @@ public class Routes implements FeatureProcessor, LayerPostProcessor, OsmRelation
     String network,
     String ref,
     String name,
-    String operator
+    String operator,
+    String colour
     // TODO: add other DETAIL_TAGS fields from relations
   ) implements OsmRelationInfo {}
 
@@ -89,7 +90,8 @@ public class Routes implements FeatureProcessor, LayerPostProcessor, OsmRelation
         relation.getString("network"),
         relation.getString("ref"),
         relation.getString("name"),
-        relation.getString("operator")
+        relation.getString("operator"),
+        relation.getString("colour")
       )
     );
   }
@@ -137,6 +139,7 @@ public class Routes implements FeatureProcessor, LayerPostProcessor, OsmRelation
       line.setAttrWithMinzoom("ref", route.ref, detailMinZoom);
       line.setAttrWithMinzoom("network", route.network, detailMinZoom);
       line.setAttrWithMinzoom("operator", route.operator, detailMinZoom);
+      line.setAttrWithMinzoom("colour", route.colour, detailMinZoom);
 
       // Add detail attributes from the way itself at higher zoom levels
       // var detailMinZoom = Math.min(minZoom + 3, 15);
