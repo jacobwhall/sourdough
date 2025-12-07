@@ -91,7 +91,6 @@ public class Aeroways implements FeatureProcessor, LayerPostProcessor {
 
   private void processAerowayLine(SourceFeature sf, FeatureCollector fc) {
     var line = fc.line(this.name());
-    line.setMinPixelSize(16.0);
     line.setZoomRange(2, 15);
 
     AttributeProcessor.setAttributes(sf, line, PRIMARY_TAGS, config);
@@ -120,8 +119,10 @@ public class Aeroways implements FeatureProcessor, LayerPostProcessor {
   private int getLabelMinZoom(SourceFeature sf) {
     if (sf.hasTag("aeroway", "aerodrome")) {
       if (sf.hasTag("aerodrome:type", "public", "international")) {
+        return 6;
+      } else if (sf.hasTag("aerodrome:type", "regional")) {
         return 8;
-      } else if (sf.hasTag("iata") || sf.hasTag("icao")) {
+      } else if (sf.hasTag("operator:type", "public", "government")) {
         return 10;
       } else {
         return 12;
