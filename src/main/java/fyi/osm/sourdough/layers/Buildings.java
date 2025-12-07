@@ -8,7 +8,6 @@ import com.onthegomap.planetiler.VectorTile;
 import com.onthegomap.planetiler.expression.Expression;
 import com.onthegomap.planetiler.geo.GeometryException;
 import com.onthegomap.planetiler.reader.SourceFeature;
-import com.onthegomap.planetiler.util.Parse;
 import fyi.osm.sourdough.Configuration;
 import fyi.osm.sourdough.Constants;
 import fyi.osm.sourdough.util.AttributeProcessor;
@@ -39,7 +38,16 @@ public class Buildings implements FeatureProcessor, LayerPostProcessor {
 
   public static final Set<String> DETAIL_TAGS = Utils.union(
     Constants.COMMON_DETAIL_TAGS,
-    Set.of("height", "building:levels", "building:material", "roof:material", "layer", "level")
+    Set.of(
+      "height",
+      "building:levels",
+      "building:levels:underground",
+      "building:material",
+      "roof:material",
+      "layer",
+      "level",
+      "location"
+    )
   );
 
   @Override

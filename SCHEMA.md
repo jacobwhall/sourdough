@@ -44,7 +44,7 @@ A small set of detail tags are included on features in every layer. These are: `
 
 Sourdough processes OSM's string-valued tags into appropriate data types for vector tiles. Any given OSM tag key is handled identically across all layers that tag is included in. Any given tag (like `access` or `height`) is treated consistenty across all layers that it appears in.
 
-The following tags are parsed to **integers**: `admin_level`, `building:levels`, `capacity`, `capacity:disabled`, `layer`, `level`, `population`.
+The following tags are parsed to **integers**: `admin_level`, `building:levels`, `building:levels:underground`, `capacity`, `capacity:disabled`, `layer`, `level`, `population`.
 
 The following tags are parsed as numeric values with units, and **converted to a floating point value in meters**: `ele`, `height`.
 
@@ -121,7 +121,7 @@ This layer also contains features tagged `building:part=*` (representing parts o
 
 **Attributes**:
 - **Primary**: `building`, `building:part`, `entrance`
-- **Detail**: `name`, `ref`, `alt_name`, `short_name`, `official_name`, `wikidata`, `wikipedia`, `height`, `building:levels`, `building:material`, `roof:material`, `layer`, `level`
+- **Detail**: `name`, `ref`, `alt_name`, `short_name`, `official_name`, `wikidata`, `wikipedia`, `height`, `building:levels`, `building:levels:underground`, `building:material`, `roof:material`, `layer`, `level`
 
 Notes
 - Heights are quantized at lower zooms to reduce tile sizes

@@ -21,6 +21,7 @@ public class AttributeProcessor {
     // Numeric types
     Map.entry("admin_level", AttributeType.INTEGER),
     Map.entry("building:levels", AttributeType.INTEGER),
+    Map.entry("building:levels:underground", AttributeType.INTEGER),
     Map.entry("capacity", AttributeType.INTEGER),
     Map.entry("capacity:disabled", AttributeType.INTEGER),
     Map.entry("layer", AttributeType.INTEGER),
