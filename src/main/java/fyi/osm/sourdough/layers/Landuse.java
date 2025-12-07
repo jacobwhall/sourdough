@@ -62,6 +62,8 @@ public class Landuse implements FeatureProcessor, LayerPostProcessor {
 
   private void processLanduseArea(SourceFeature sf, FeatureCollector fc) {
     var polygon = fc.polygon(this.name());
+    polygon.setPixelTolerance(0.25);
+
     AttributeProcessor.setAttributes(sf, polygon, PRIMARY_TAGS, config);
     var detailMinZoom = polygon.getMinZoomForPixelSize(32);
     AttributeProcessor.setAttributesWithMinzoom(sf, polygon, DETAIL_TAGS, detailMinZoom, config);

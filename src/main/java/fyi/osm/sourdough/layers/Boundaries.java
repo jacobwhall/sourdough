@@ -6,7 +6,6 @@ import com.onthegomap.planetiler.ForwardingProfile.FeatureProcessor;
 import com.onthegomap.planetiler.ForwardingProfile.LayerPostProcessor;
 import com.onthegomap.planetiler.ForwardingProfile.OsmRelationPreprocessor;
 import com.onthegomap.planetiler.VectorTile;
-import com.onthegomap.planetiler.expression.Expression;
 import com.onthegomap.planetiler.geo.GeometryException;
 import com.onthegomap.planetiler.reader.SourceFeature;
 import com.onthegomap.planetiler.reader.osm.OsmElement;
@@ -18,8 +17,6 @@ import fyi.osm.sourdough.Constants;
 import fyi.osm.sourdough.util.AttributeProcessor;
 import fyi.osm.sourdough.util.Utils;
 import java.util.List;
-import java.util.Map;
-import java.util.OptionalInt;
 import java.util.Set;
 
 public class Boundaries implements FeatureProcessor, LayerPostProcessor, OsmRelationPreprocessor {
@@ -112,6 +109,7 @@ public class Boundaries implements FeatureProcessor, LayerPostProcessor, OsmRela
       var polygon = fc.polygon(this.name());
       polygon.setZoomRange(2, 15);
       polygon.setMinPixelSize(2.0);
+      polygon.setPixelTolerance(0.25);
 
       AttributeProcessor.setAttributes(sf, polygon, PRIMARY_TAGS, config);
 

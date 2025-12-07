@@ -2,8 +2,6 @@ package fyi.osm.sourdough.layers;
 
 import com.onthegomap.planetiler.FeatureCollector;
 import com.onthegomap.planetiler.ForwardingProfile.FeatureProcessor;
-import com.onthegomap.planetiler.ForwardingProfile.LayerPostProcessor;
-import com.onthegomap.planetiler.Profile;
 import com.onthegomap.planetiler.expression.Expression;
 import com.onthegomap.planetiler.reader.SourceFeature;
 import fyi.osm.sourdough.Configuration;
