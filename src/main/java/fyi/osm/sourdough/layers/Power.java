@@ -43,6 +43,9 @@ public class Power implements FeatureProcessor, LayerPostProcessor {
       "structure",
       "location",
       "ref",
+      "plant:source",
+      "plant:method",
+      "plant:output:electricity",
       "generator:source",
       "generator:method",
       "generator:type",
@@ -124,19 +127,19 @@ public class Power implements FeatureProcessor, LayerPostProcessor {
     int voltage = parseMaxVoltage(voltageStr);
 
     if (voltage >= 345000) {
-      return 6;
+      return 4;
     } else if (voltage >= 220000) {
-      return 7;
+      return 5;
     } else if (voltage >= 110000) {
-      return 8;
+      return 6;
     } else if (voltage >= 33000) {
-      return 9;
+      return 7;
     } else if (voltage >= 10000) {
-      return 10;
+      return 8;
     } else if (voltage >= 1000) {
-      return 11;
+      return 9;
     } else {
-      return 12;
+      return 10;
     }
   }
 
@@ -160,7 +163,7 @@ public class Power implements FeatureProcessor, LayerPostProcessor {
 
   private int getLabelMinZoom(SourceFeature sf) {
     return switch (sf.getString("power")) {
-      case "plant" -> 11;
+      case "plant" -> getPlantMinZoom(sf);
       case "tower", "substation" -> 12;
       case "generator" -> switch (sf.getString("generator:source")) {
         case "wind" -> 13;
@@ -170,6 +173,62 @@ public class Power implements FeatureProcessor, LayerPostProcessor {
       case "pole", "transformer" -> 14;
       default -> 14;
     };
+  }
+
+  private int getPlantMinZoom(SourceFeature sf) {
+    String outputStr = sf.getString("plant:output:electricity");
+    if (outputStr == null) {
+      return 11; // Small plant or no data
+    }
+
+    double outputMW = parsePowerOutput(outputStr);
+
+    if (outputMW >= 1000) {
+      return 6;
+    } else if (outputMW >= 500) {
+      return 7;
+    } else if (outputMW >= 100) {
+      return 8;
+    } else if (outputMW >= 50) {
+      return 9;
+    } else if (outputMW >= 10) {
+      return 10;
+    } else {
+      return 11;
+    }
+  }
+
+  private double parsePowerOutput(String outputStr) {
+    if (outputStr == null) {
+      return 0;
+    }
+
+    String normalized = outputStr.trim().toUpperCase();
+    double value = 0;
+    double multiplier = 1;
+
+    // parse numeric value and convert from given unit to MW
+    if (normalized.endsWith("GW")) {
+      multiplier = 1000;
+      normalized = normalized.substring(0, normalized.length() - 2).trim();
+    } else if (normalized.endsWith("MW")) {
+      multiplier = 1;
+      normalized = normalized.substring(0, normalized.length() - 2).trim();
+    } else if (normalized.endsWith("KW")) {
+      multiplier = 0.001;
+      normalized = normalized.substring(0, normalized.length() - 2).trim();
+    } else if (normalized.endsWith("W")) {
+      multiplier = 0.000001;
+      normalized = normalized.substring(0, normalized.length() - 1).trim();
+    }
+
+    try {
+      value = Double.parseDouble(normalized);
+    } catch (NumberFormatException e) {
+      return 0;
+    }
+
+    return value * multiplier;
   }
 
   @Override
