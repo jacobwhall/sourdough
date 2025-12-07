@@ -1,17 +1,13 @@
 package fyi.osm.sourdough.layers;
 
 import com.onthegomap.planetiler.FeatureCollector;
-import com.onthegomap.planetiler.FeatureCollector.Feature;
 import com.onthegomap.planetiler.FeatureMerge;
 import com.onthegomap.planetiler.ForwardingProfile.FeatureProcessor;
 import com.onthegomap.planetiler.ForwardingProfile.LayerPostProcessor;
-import com.onthegomap.planetiler.ForwardingProfile.OsmRelationPreprocessor;
 import com.onthegomap.planetiler.VectorTile;
 import com.onthegomap.planetiler.expression.Expression;
 import com.onthegomap.planetiler.geo.GeometryException;
 import com.onthegomap.planetiler.reader.SourceFeature;
-import com.onthegomap.planetiler.reader.osm.OsmElement;
-import com.onthegomap.planetiler.reader.osm.OsmRelationInfo;
 import fyi.osm.sourdough.Configuration;
 import fyi.osm.sourdough.util.AttributeProcessor;
 import java.util.*;
@@ -30,7 +26,12 @@ public class Highways implements FeatureProcessor, LayerPostProcessor {
     return LAYER_NAME;
   }
 
-  public static final Set<String> PRIMARY_TAGS = Set.of("highway", "expressway", "junction");
+  public static final Set<String> PRIMARY_TAGS = Set.of(
+    "highway",
+    "expressway",
+    "junction",
+    "informal"
+  );
 
   public static final Set<String> LABEL_TAGS = Set.of("name", "ref", "surface");
 
@@ -49,7 +50,6 @@ public class Highways implements FeatureProcessor, LayerPostProcessor {
     "dual_carriageway",
     "motorroad",
     "oneway",
-    "informal",
     "operator",
     "website",
     "access",
@@ -178,7 +178,10 @@ public class Highways implements FeatureProcessor, LayerPostProcessor {
       case "tertiary", "tertiary_link" -> 10;
       case "residential", "unclassified" -> 11;
       case "trailhead" -> 11;
-      case "track", "path", "footway", "cycleway", "bridleway" -> sf.hasTag("name") ? 11 : 12;
+      case "track", "path", "footway", "cycleway", "bridleway" -> (sf.hasTag("name") &&
+          !sf.hasTag("informal", "yes"))
+        ? 11
+        : 12;
       case "service", "busway", "pedestrian", "living_street" -> 12;
       default -> 12;
     };
@@ -236,8 +239,13 @@ public class Highways implements FeatureProcessor, LayerPostProcessor {
     // when physical detail tags create segment breaks
     var minLength = zoom >= 12 ? 0.0 : 1.0;
 
+    var tolerance = zoom < 15 ? 0.25 : 0.125;
+
+    // nvm, never drop segments (regardless of zoom level it tends to make gaps)
+    minLength = 0.0;
+
     items = FeatureMerge.mergeMultiPoint(items);
-    items = FeatureMerge.mergeLineStrings(items, minLength, 0.125, 8);
+    items = FeatureMerge.mergeLineStrings(items, minLength, tolerance, 8);
     items = FeatureMerge.mergeNearbyPolygons(items, 3.0, 3.0, 0.5, 0.5);
 
     return items;
