@@ -5,6 +5,8 @@ import static com.onthegomap.planetiler.util.Parse.parseIntOrNull;
 import com.onthegomap.planetiler.FeatureCollector;
 import com.onthegomap.planetiler.ForwardingProfile.FeatureProcessor;
 import com.onthegomap.planetiler.expression.Expression;
+import com.onthegomap.planetiler.geo.GeoUtils;
+import com.onthegomap.planetiler.geo.GeometryException;
 import com.onthegomap.planetiler.reader.SourceFeature;
 import com.onthegomap.planetiler.util.SortKey;
 import com.onthegomap.planetiler.util.ZoomFunction;
@@ -12,6 +14,7 @@ import fyi.osm.sourdough.Configuration;
 import fyi.osm.sourdough.Constants;
 import fyi.osm.sourdough.util.AttributeProcessor;
 import fyi.osm.sourdough.util.Utils;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -42,8 +45,6 @@ public class Places implements FeatureProcessor {
   private static final ZoomFunction<Number> LOCALITY_GRID_LIMIT_ZOOM_FUNCTION =
     ZoomFunction.fromMaxZoomThresholds(Map.of(20, 3));
 
-  private record ZoomRange(double minZoom, double maxZoom) {}
-
   @Override
   public Expression filter() {
     return Expression.and(
@@ -62,7 +63,10 @@ public class Places implements FeatureProcessor {
         "hamlet",
         "isolated_dwelling",
         "farm",
-        "allotments"
+        "allotments",
+        "archipelago",
+        "island",
+        "islet"
       ),
       Expression.matchField("name")
     );
@@ -70,12 +74,35 @@ public class Places implements FeatureProcessor {
 
   @Override
   public void processFeature(SourceFeature sf, FeatureCollector fc) {
-    if (sf.isPoint()) {
+    if (sf.canBePolygon()) {
+      processPlaceArea(sf, fc);
+    } else if (sf.isPoint()) {
       processPlacePoint(sf, fc);
     }
   }
 
+  private void processPlaceArea(SourceFeature sf, FeatureCollector fc) {
+    if (!sf.hasTag("place", "archipelago", "island", "islet")) {
+      return;
+    }
+
+    var point = fc.pointOnSurface(this.name());
+    try {
+      point.setMinZoom(GeoUtils.minZoomForPixelSize(sf.size(), 32));
+    } catch (GeometryException e) {
+      point.setMinZoom(12);
+    }
+    point.setBufferPixels(64);
+
+    AttributeProcessor.setAttributes(sf, point, PRIMARY_TAGS, config);
+    AttributeProcessor.setAttributes(sf, point, DETAIL_TAGS, config);
+  }
+
   private void processPlacePoint(SourceFeature sf, FeatureCollector fc) {
+    if (sf.hasTag("place", "archipelago", "island", "islet")) {
+      return;
+    }
+
     var point = fc.point(this.name());
     point.setMinZoom(getLabelMinZoom(sf));
 
