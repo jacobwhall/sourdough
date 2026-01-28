@@ -183,8 +183,8 @@ This layer also contains features tagged `junction=*`, which is used to map cert
 This layer **excludes** features tagged `highway=construction` or `highway=proposed`.
 
 **Attributes**:
-- **Primary**: `highway`, `expressway`, `junction`
-- **Detail**: `name`, `ref`, `surface`, `service`, `junction`, `dual_carriageway`, `motorroad`, `oneway`, `informal`, `operator`, `website`, `access`, `motor_vehicle`, `bicycle`, `foot`, `wheelchair`, `dog`, `supervised`, `lit`, `smoothness`, `sac_scale`, `trail_visibility`, `mtb`, `mtb:scale`, `mtb:scale:imba`, `layer`, `bridge`, `tunnel`, `location`, `covered`, `indoor`
+- **Primary**: `highway`, `expressway`, `junction`, `informal`
+- **Detail**: `name`, `ref`, `surface`, `service`, `junction`, `dual_carriageway`, `motorroad`, `oneway`, `operator`, `website`, `access`, `motor_vehicle`, `bicycle`, `foot`, `wheelchair`, `dog`, `supervised`, `lit`, `smoothness`, `sac_scale`, `trail_visibility`, `mtb`, `mtb:scale`, `mtb:scale:imba`, `layer`, `bridge`, `tunnel`, `location`, `covered`, `indoor`
 
 Notes
 - Connected highway segments with the same attributes are merged
@@ -284,7 +284,7 @@ The `power` layer contains features from OSM which are tagged `power=*`, includi
 
 **Attributes**:
 - **Primary**: `power`, `voltage`
-- **Detail**: `name`, `ref`, `alt_name`, `short_name`, `official_name`, `wikidata`, `wikipedia`, `operator`, `frequency`, `cables`, `circuits`, `material`, `design`, `structure`, `location`, `generator:source`, `generator:method`, `generator:type`, `generator:output:electricity`
+- **Detail**: `name`, `ref`, `alt_name`, `short_name`, `official_name`, `wikidata`, `wikipedia`, `operator`, `frequency`, `cables`, `circuits`, `material`, `design`, `structure`, `location`, `generator:source`, `generator:method`, `generator:type`, `generator:output:electricity`, `plant:source`, `plant:method`, `plant:output:electricity`
 
 ### Public Transport
 
